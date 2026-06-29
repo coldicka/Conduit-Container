@@ -1,0 +1,57 @@
+services:
+  # --- DATABASE ---
+  database:
+    container_name: conduit_container_database
+    image: postgres:16-alpine
+    restart: on-failure
+    # DB also remains securely isolated within its internal network
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # --- FRONTEND ---
+  frontend:
+    container_name: conduit_container_frontend
+    restart: on-failure
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # --- BACKEND ---
+  backend:
+    container_name: conduit_container_backend
+    restart: on-failure
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # The port does not need to be opened to the outside, since the front end communicates internally
+    expose:
+      - "8080" # The backend service is exposed on port 8080 for internal communication with the frontend service.
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+    networks:
+      - app-network
+    depends_on:
+      - database
+
+# --- NETWORK & VOLUMES ---
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
