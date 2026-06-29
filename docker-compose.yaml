@@ -29,6 +29,8 @@ services:
       - app-network
     depends_on:
       - backend
+    env_file:
+      - .env
 
   # --- BACKEND ---
   backend:
@@ -40,9 +42,18 @@ services:
     # The port does not need to be opened to the outside, since the front end communicates internally
     expose:
       - "8080" # The backend service is exposed on port 8080 for internal communication with the frontend service.
+    # volumes are used to persist data and share files between the host and the container. In this case, a volume named conduit-backend is mounted to the /app/db_data directory inside the container. This allows the backend service to store and retrieve data from the database.
+    volumes:
+      - conduit-backend:/app/db_data
+    env_file:
+      - .env
     environment:
-      - DB_HOST=database
-      - DB_PORT=5432
+      DB_HOST: database
+      DB_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
     networks:
       - app-network
     depends_on:
@@ -55,3 +66,4 @@ networks:
 
 volumes:
   db-data:
+  conduit-backend:
