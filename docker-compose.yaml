@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     # DB also remains securely isolated within its internal network
     expose:
-      - "5432"
+      - "${DATABASE_PORT}"
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -31,6 +31,8 @@ services:
       - backend
     env_file:
       - .env
+    volumes:
+      - frontend_data:/app/data
 
   # --- BACKEND ---
   backend:
@@ -39,12 +41,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # The port does not need to be opened to the outside, since the front end communicates internally
-    expose:
-      - "${BACKEND_PORT}:80" # The backend service is exposed on port 8080 for internal communication with the frontend service.
     # volumes are used to persist data and share files between the host and the container. In this case, a volume named conduit-backend is mounted to the /app/db_data directory inside the container. This allows the backend service to store and retrieve data from the database.
     volumes:
-      - conduit-backend:/app/db_data
+      - backend-data:/app/db_data
     env_file:
       - .env
     environment:
@@ -56,6 +55,8 @@ services:
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
     networks:
       - app-network
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     depends_on:
       - database
 
@@ -66,4 +67,5 @@ networks:
 
 volumes:
   db-data:
-  conduit-backend:
+  backend-data:
+  frontend_data:
