@@ -31,8 +31,6 @@ services:
       - backend
     env_file:
       - .env
-    volumes:
-      - frontend_data:/app/data
 
   # --- BACKEND ---
   backend:
@@ -68,4 +66,3 @@ networks:
 volumes:
   db-data:
   backend-data:
-  frontend_data:
