@@ -33,7 +33,7 @@ services:
       - .env
 
   # --- BACKEND ---
-  backend:
+  backend: # This name is used in NGINX in the "proxy_pass" directive
     container_name: conduit_container_backend
     restart: unless-stopped
     build:
@@ -51,6 +51,9 @@ services:
       DATABASE_USERNAME: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
     networks:
       - app-network
     ports:
