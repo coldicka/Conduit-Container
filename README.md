@@ -49,11 +49,11 @@ At a minimum, you should set:
 
 ```bash
 cd Conduit-Container/
-docker compose build
+docker-compose build
 ```  
 ### Start the application
 ```bash
-docker compose up -d
+docker-compose up -d
 ```
 
 ### Open the application
