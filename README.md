@@ -34,9 +34,6 @@ cd Conduit-Container
 Rename the provided example configuration files:
 ```bash
 mv example.env .env
-
-cd frontend/src/app/core/interceptors
-mv example.api.config.ts api.config.ts # rename the example.api.config.ts to api.config.ts
 ```
 
 Next, edit the .env file and configure the required environment variables.
