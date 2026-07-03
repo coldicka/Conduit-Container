@@ -19,8 +19,14 @@ Before you begin, make sure the following software is installed on your system:
 ## Quickstart
 
 ### Clone Repository 
+
 ```bash
 git clone --recurse-submodules https://github.com/coldicka/Conduit-Container.git
+```
+### Submodule initialisieren
+
+```bash
+git submodule update --init --recursive
 ```
 
 ### Navigate to the project
