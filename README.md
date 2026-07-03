@@ -50,6 +50,7 @@ At a minimum, you should set:
 * POSTGRES_PASSWORD
 * DJANGO_ALLOWED_HOSTS
 * API_BASE_URL
+* Complete the "ALLOWED_HOSTS" section by adding your ID at the end.
 
 ### Build the Docker images
 
