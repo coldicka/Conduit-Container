@@ -4,9 +4,12 @@ services:
     container_name: conduit_container_database
     image: postgres:16-alpine
     restart: unless-stopped
+    command: ["postgres", "-c", "password_encryption=md5"]
     # DB also remains securely isolated within its internal network
     expose:
       - "${DATABASE_PORT}"
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -15,6 +18,26 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  phppgadmin:
+    container_name: conduit_container_phppgadmin
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=oberflaechepass
+    networks:
+      - app-network
+    depends_on:
+      database:
+        condition: service_healthy
 
   # --- FRONTEND ---
   frontend:

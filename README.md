@@ -20,7 +20,7 @@ Before you begin, make sure the following software is installed on your system:
 
 ### Clone Repository 
 ```bash
-git clone --recurse-submodules https://github.com/coldicka/Conduit-Container.git &&
+git clone --recurse-submodules https://github.com/coldicka/Conduit-Container.git
 ```
 
 ### Navigate to the project
@@ -29,7 +29,7 @@ git clone --recurse-submodules https://github.com/coldicka/Conduit-Container.git
 cd Conduit-Container
  ```
 
- ### Configure the application
+ ### Configure the applications
 
 Rename the provided example configuration files:
 ```bash
@@ -47,12 +47,6 @@ At a minimum, you should set:
 * POSTGRES_PASSWORD
 * DJANGO_ALLOWED_HOSTS
 * API_BASE_URL
-
-Generate a secure Django secret key with:
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(50))"
-```
 
 ### Build the Docker images
 
@@ -94,7 +88,9 @@ For Example ...
 
 | Variable               | Description                                | Example                                 |
 | :---: | :---: | :---: |
-| DJANGO_SECRET_KEY      | Secret key used by Django                  | `g9!Qv4$KL2..`                          |
+| DJANGO_SUPERUSER_USERNAME | Your admin password | `test-admin`     |
+| DJANGO_SUPERUSER_EMAIL | Your Admin E-mail | `test@test.password` |
+| DJANGO_SUPERUSER_PASSWORD | Your admin password | `test-password` |
 | POSTGRES_PASSWORD      | PostgreSQL database Passwort               | `Your__Password____`                    |
 | DJANGO_ALLOWED_HOSTS   | List of allowed hosts                      |  `localhost,127.0.0.1,backend,YOUR_IP`  |
 | PORT                   | ort exposed by the Angular frontend.       | `8282`                                  |
