@@ -33,11 +33,12 @@ git submodule update --init --recursive
 
 ```bash
 cd Conduit-Container
- ```
+```
 
- ### Configure the applications
+### Configure the applications
 
 Rename the provided example configuration files:
+
 ```bash
 cp example.env .env
 ```
@@ -58,7 +59,9 @@ At a minimum, you should set:
 cd Conduit-Container/
 docker compose build
 ```  
+
 ### Start the application
+
 ```bash
 docker compose up -d
 ```
@@ -76,6 +79,7 @@ http://<HOST_IP>:8282/api
 ```
 
 For example:
+
 ```bash
 http://<HOST_IP>:8282/api/articles
 ```
@@ -87,6 +91,7 @@ http://<HOST_IP>:8000/admin
 ```
 
 ## Usage
+
 The `.env` file contains all required environment variables.
 For Example ... 
 
@@ -99,7 +104,7 @@ For Example ...
 | DJANGO_ALLOWED_HOSTS   | List of allowed hosts                      |  `localhost,127.0.0.1,backend,YOUR_IP`  |
 | PORT                   | Port exposed by the Angular frontend.       | `8282`                                  |
 | API_BASE_URL           | Base URL used by the frontend to access the backend API. | `http://YOUR_IP:8282/api` |
-| DJANGO_SECRET_KEY      | Django Secret Key                          | zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA |
+| DJANGO_SECRET_KEY      | Django Secret Key                          | zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JY ... |
 
 ### Generating a secret key
 
@@ -126,7 +131,6 @@ or, if your .env file uses quotes:
 `DJANGO_SECRET_KEY="zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA"`
 
 Make sure you use the actual value generated on your machine, not the example above, since the secret key should be unique and kept private.
-
 
 ### Architecture
 
