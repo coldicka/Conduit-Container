@@ -8,8 +8,6 @@ services:
     # DB also remains securely isolated within its internal network
     expose:
       - "${DATABASE_PORT}"
-    env_file:
-      - .env
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -47,24 +45,26 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "${FRONTEND_PORT}:80"
+      - "8282:80"
+    volumes:
+      - django-static:/usr/share/nginx/html/static
     networks:
       - app-network
     depends_on:
       - backend
-    env_file:
-      - .env
 
   # --- BACKEND ---
   backend: # This name is used in NGINX in the "proxy_pass" directive
     container_name: conduit_container_backend
     restart: unless-stopped
+    user: root
     build:
       context: ./backend
       dockerfile: Dockerfile
     # volumes are used to persist data and share files between the host and the container. In this case, a volume named conduit-backend is mounted to the /app/db_data directory inside the container. This allows the backend service to store and retrieve data from the database.
     volumes:
       - backend-data:/app/db_data
+      - django-static:/app/staticfiles
     env_file:
       - .env
     environment:
@@ -77,6 +77,7 @@ services:
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
     networks:
       - app-network
     ports:
@@ -92,3 +93,4 @@ networks:
 volumes:
   db-data:
   backend-data:
+  django-static:

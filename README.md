@@ -99,6 +99,33 @@ For Example ...
 | DJANGO_ALLOWED_HOSTS   | List of allowed hosts                      |  `localhost,127.0.0.1,backend,YOUR_IP`  |
 | PORT                   | ort exposed by the Angular frontend.       | `8282`                                  |
 | API_BASE_URL           | Base URL used by the frontend to access the backend API. | `http://YOUR_IP:8282/api` |
+| SECRET_KEY             | Django Secret Key                          |
+
+### Generating a secret key
+
+The instructions are asking you to generate a random secret key for your Django application and store it in your .env file.
+
+Run this command in your terminal:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+It will output a long, random string, for example:
+
+`zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA`
+
+Your output will be different, and that's expected. Each generated key is unique.
+
+Open your .env file and set the DJANGO_SECRET_KEY variable:
+
+`DJANGO_SECRET_KEY=zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA`
+
+or, if your .env file uses quotes:
+
+`DJANGO_SECRET_KEY="zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA"`
+
+Make sure you use the actual value generated on your machine, not the example above, since the secret key should be unique and kept private.
 
 
 ### Architecture
@@ -108,8 +135,6 @@ The application consists of three Docker services:
 * Angular Frontend – Provides the web interface.
 * Django Backend – Exposes the REST API and contains the application logic.
 * PostgreSQL Database – Stores all persistent application data.
-
-To improve security, the backend is not exposed directly to the internet. Instead, all incoming requests are routed through an Nginx reverse proxy.
 
 The project uses multi-stage Docker builds, which exclude the build environment from the final images. This reduces image size and improves deployment efficiency.
 
