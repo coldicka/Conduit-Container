@@ -39,7 +39,7 @@ cd Conduit-Container
 
 Rename the provided example configuration files:
 ```bash
-mv example.env .env
+cp example.env .env
 ```
 
 Next, edit the .env file and configure the required environment variables.
@@ -87,7 +87,7 @@ http://<HOST_IP>:8000/admin
 ```
 
 ## Usage
-The .env file contains all required environment variables.
+The `.env` file contains all required environment variables.
 For Example ... 
 
 | Variable               | Description                                | Example                                 |
@@ -140,6 +140,6 @@ The project uses multi-stage Docker builds, which exclude the build environment 
 
 A persistent Docker volume is used for the PostgreSQL database to prevent data loss. All services communicate through an isolated Docker network.
 
-When the backend container starts, the entrypoint.sh script automatically applies any pending Django database migrations before launching the application with Gunicorn. Gunicorn is used instead of Django's built-in development server because it is better suited for production environments.
+When the backend container starts, the `entrypoint.sh` script automatically applies any pending Django database migrations before launching the application with Gunicorn. Gunicorn is used instead of Django's built-in development server because it is better suited for production environments.
 
-Python dependencies are defined in requirements.txt. Files that should not be included in Docker images or committed to the repository are excluded via `.dockerignore` and `.gitignore`.
+Python dependencies are defined in `requirements.txt`. Files that should not be included in Docker images or committed to the repository are excluded via `.dockerignore` and `.gitignore`.
