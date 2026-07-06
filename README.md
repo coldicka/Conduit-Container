@@ -97,9 +97,9 @@ For Example ...
 | DJANGO_SUPERUSER_PASSWORD | Your admin password | `test-password` |
 | POSTGRES_PASSWORD      | PostgreSQL database Passwort               | `Your__Password____`                    |
 | DJANGO_ALLOWED_HOSTS   | List of allowed hosts                      |  `localhost,127.0.0.1,backend,YOUR_IP`  |
-| PORT                   | ort exposed by the Angular frontend.       | `8282`                                  |
+| PORT                   | Port exposed by the Angular frontend.       | `8282`                                  |
 | API_BASE_URL           | Base URL used by the frontend to access the backend API. | `http://YOUR_IP:8282/api` |
-| SECRET_KEY             | Django Secret Key                          |
+| DJANGO_SECRET_KEY      | Django Secret Key                          | zH0c1V5xYxv7LqQ5cFQYq9vP8QJz8JYjQnX7v1hWk2bL6rTmS9Kf0mDgA |
 
 ### Generating a secret key
 
@@ -108,7 +108,7 @@ The instructions are asking you to generate a random secret key for your Django 
 Run this command in your terminal:
 
 ```bash
-python -c "import secrets; print(secrets.token_urlsafe(50))"
+python3 -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
 It will output a long, random string, for example:
