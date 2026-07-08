@@ -5,7 +5,6 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     command: ["postgres", "-c", "password_encryption=md5"]
-    # DB also remains securely isolated within its internal network
     expose:
       - "${DATABASE_PORT}"
     environment:
@@ -39,19 +38,16 @@ services:
       - backend
 
   # --- BACKEND ---
-  backend: # This name is used in NGINX in the "proxy_pass" directive
+  backend:
     container_name: conduit_container_backend
     restart: unless-stopped
     user: root
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # volumes are used to persist data and share files between the host and the container. In this case, a volume named conduit-backend is mounted to the /app/db_data directory inside the container. This allows the backend service to store and retrieve data from the database.
     volumes:
       - backend-data:/app/db_data
       - django-static:/app/staticfiles
-    env_file:
-      - .env
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DATABASE_PORT}
