@@ -1,0 +1,97 @@
+name: Conduit-Container CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  REPO: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # first step is to checkout the repository and its submodules
+      - name: Check Repository (inc. Submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+        
+      # second step is to log in to GitHub Container Registry
+      - name: In GitHub Container Registry einloggen
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- BACKEND BUILD ---
+      - name: Build backend (DJANGO) Image and push to GitHub Container Registry
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:${{ github.sha }}
+
+      # --- FRONTEND BUILD ---
+      - name: Build frontend Image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
+          build-args: |
+            API_URL=${{ secrets.API_URL }
+
+
+  deploy-to-server:
+    runs-on: ubuntu-latest
+      needs: build-and-push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload artifacts (.env and docker-compose.yaml)
+        uses: actions/upload-artifact@v7
+        with:
+          name: deployment-files
+          path: |
+            docker-compose.yaml
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: SSH-Verbindung aufbauen und deployen
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # 1. In das Projektverzeichnis wechseln
+            cd /conduit-container
+
+            # 2. Repository und Submodule auf den neuesten Stand bringen
+            git pull origin main
+            git submodule update --init --recursive
+
+            # 3. .env Datei aus dem GitHub Secret live neu schreiben
+            echo "${{ secrets.DOT_ENV_FILE }}" > .env
+
+            git pull --recurse-submodules origin main
+            docker compose pull
+            docker compose up -d --build
