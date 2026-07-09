@@ -102,8 +102,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script_stop: true # Stop the script immediately if a command fails
           script: |
-            # 1. Go to the project directory
-            cd /conduit-container || exit 1
+            # 1. Create and go to the project directory
+            mkdir -p ~/conduit-container
+            cd ~/conduit-container || exit 1
 
             # 2. Copy the .env file from GitHub secrets to the server
             cat << 'EOF' > .env
