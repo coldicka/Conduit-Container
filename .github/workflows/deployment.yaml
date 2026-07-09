@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/c-container # only for testing purposes, remove this line in production
+      - feature/c-container # only for test
 
 env:
   REGISTRY: ghcr.io
@@ -90,6 +90,7 @@ jobs:
 
   deploy-to-server:
     runs-on: ubuntu-latest
+    # This job depends on the successful completion of the build-backend and build-frontend jobs
     needs: [build-backend, build-frontend]
 
     steps:
@@ -110,7 +111,7 @@ jobs:
             EOF
 
             # 3. Log in to GitHub Container Registry
-            echo "${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin || exit 1
 
             # 4. Pull the latest images for backend and frontend
             docker compose pull
