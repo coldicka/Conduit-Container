@@ -101,15 +101,14 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script_stop: true # Stop the script immediately if a command fails
+          envs: ENV_CONTENT
           script: |
             # 1. Create and go to the project directory
             mkdir -p ~/conduit-container
             cd ~/conduit-container || exit 1
 
             # 2. Copy the .env file from GitHub secrets to the server
-            cat << 'EOF' > .env
-            ${{ secrets.DOT_ENV_FILE }}
-            EOF
+            echo "$ENV_CONTENT" > .env
 
             # 3. Log in to GitHub Container Registry
             echo "${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin || exit 1
@@ -118,3 +117,5 @@ jobs:
             docker compose pull
             docker compose up -d --remove-orphans
             docker image prune -f
+        env:
+          ENV_CONTENT: ${{ secrets.DOT_ENV_FILE }}
