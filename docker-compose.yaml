@@ -5,8 +5,6 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     command: ["postgres", "-c", "password_encryption=md5"]
-    expose:
-      - "${DATABASE_PORT}"
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -25,9 +23,7 @@ services:
   frontend:
     container_name: conduit_container_frontend
     restart: unless-stopped
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/${GHCR_OWNER}/conduit-frontend:latest
     ports:
       - "8282:80"
     volumes:
@@ -42,9 +38,7 @@ services:
     container_name: conduit_container_backend
     restart: unless-stopped
     user: root
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/${GHCR_OWNER}/conduit-backend:latest
     volumes:
       - backend-data:/app/db_data
       - django-static:/app/staticfiles
@@ -64,7 +58,8 @@ services:
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
 # --- NETWORK & VOLUMES ---
 networks:
