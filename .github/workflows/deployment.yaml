@@ -105,7 +105,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "docker-compose.yaml,.gitmodules,example.env,.dockerignore,.gitignore"
           target: "~/Conduit-Container/"
-          strip_components: 1 # Flatten the folder structure
+          strip_components: 0 # Flatten the folder structure
           # rm-dist: true # Deletes old folders with errors in the destination directory before copying
 
       # 2. SSH Connection to the server and execute commands
