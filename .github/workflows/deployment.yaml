@@ -92,56 +92,48 @@ jobs:
     # This job depends on the successful completion of the build-backend and build-frontend jobs
     needs: [build-backend, build-frontend]
 
-    steps:
-      # 1. Create a folder, write a .env file, and start the container via SSH
-      - name: Deploy application via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script_stop: true # Stop the script immediately if a command fails
-          envs: ENV_CONTENT
-          script: |
-            # 1. Create a folder if it doesn't already exist
-            mkdir -p ~/conduit-container
-            cd ~/conduit-container || exit 1
-
-            # 2. Write a .env file
-            echo "$ENV_CONTENT" > .env
-
-      - name: Log Success Message
-        run: echo "The folder was successfully created, and the .env file was successfully added"
-
-      - name: Copy docker-compose.yml and any files via SCP
+    steps:  
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      # 1. Create a folder
+      - name: Copy docker-compose, any files and configurations via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }} # Falls dein Key verschlüsselt ist
           source: "docker-compose.yml, .gitmodules, example.env, .dockerignore, .gitignore"
           target: "~/conduit-container/"
 
       - name: Log Success Message
-        run: echo "The files were successfully added"
+        run: echo "The folder was successfully created, and the .env file was successfully added"
 
-      - name: Update and restart Docker containers
+      # 2. SSH Connection to the server and execute commands
+      - name: Update and restart Docker containers via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          script_stop: true # Stop the script immediately if a command fails
+          script_stop: true
+          envs: ENV_CONTENT # Schaltet die Variable für dieses Skript frei
           script: |
             # 1. Go to the project directory
             cd ~/conduit-container || exit 1
 
+            # 2. Create a .env file with the content of the ENV_CONTENT variable
+            echo "$ENV_CONTENT" > .env || exit 1
+
             # 3. Log in to GitHub Container Registry
             echo "${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin || exit 1
 
-            # Update and Start the Container
+            # 4. Update and Start the Container
             docker compose pull
             docker compose up -d --remove-orphans
+
+            # 5. Speicherplatz freigeben
             docker image prune -f
         env:
           ENV_CONTENT: ${{ secrets.DOT_ENV_FILE }}
