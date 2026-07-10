@@ -103,10 +103,9 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }} # Falls dein Key verschlüsselt ist
           source: "docker-compose.yml,.gitmodules,example.env,.dockerignore,.gitignore"
           target: "~/Conduit-Container/"
-          strip_components: 0 # Forces SCP to place the files directly in the destination folder
+          rm-dist: true # Deletes old folders with errors in the destination directory before copying
 
       - name: Log Success Message
         run: echo "The folder was successfully created, and the .env file was successfully added"
