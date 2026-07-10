@@ -103,7 +103,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "docker-compose.yaml,.gitmodules,example.env,.dockerignore,.gitignore"
+          source: "docker-compose.yaml"
           target: "~/Conduit-Container/"
           strip_components: 0 # Flatten the folder structure
           # rm-dist: true # Deletes old folders with errors in the destination directory before copying
