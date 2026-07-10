@@ -105,7 +105,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "docker-compose.yml,.gitmodules,example.env,.dockerignore,.gitignore"
           target: "~/Conduit-Container/"
-          rm-dist: true # Deletes old folders with errors in the destination directory before copying
+          strip_components: 1 # Flatten the folder structure
+          # rm-dist: true # Deletes old folders with errors in the destination directory before copying
 
       - name: Log Success Message
         run: echo "The folder was successfully created, and the .env file was successfully added"
