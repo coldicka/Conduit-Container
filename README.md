@@ -172,17 +172,17 @@ Create the following repository secrets:
 
 Click New repository secret to create each secret.
 
-![Alternativtext](./images/new-secret.png)
+![Alternativtext](./images/new_secret.png)
 
-### SERVER_USER
+#### SERVER_USER
 **Name:** `SERVER_USER`
 **Secret:** The username used to log in to your deployment server.
 
-### SERVER_HOST
+#### SERVER_HOST
 **Name:** `SERVER_HOST`
 **Secret:** The IP address or hostname of your deployment server.
 
-### SERVER_SSH_KEY
+#### SERVER_SSH_KEY
 
 Create a dedicated SSH key pair for GitHub Actions to access your server.
 
@@ -214,7 +214,7 @@ Create a dedicated SSH key pair for GitHub Actions to access your server.
 > [!IMPORTANT]
 > Never share or commit your private SSH key. It should only be stored as a GitHub repository secret.
 
-### DOT_ENV_FILE
+#### DOT_ENV_FILE
 
 Your `.env` file should contain all environment variables required by the application.
 
