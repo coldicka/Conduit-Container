@@ -174,15 +174,17 @@ Click New repository secret to create each secret.
 
 ![Alternativtext](./images/new_secret.png)
 
-#### SERVER_USER
-**Name:** `SERVER_USER`
-**Secret:** The username used to log in to your deployment server.
+#### __SERVER_USER__
 
-#### SERVER_HOST
-**Name:** `SERVER_HOST`
-**Secret:** The IP address or hostname of your deployment server.
+* **Name:** `SERVER_USER`
+* **Secret:** The username used to log in to your deployment server.
 
-#### SERVER_SSH_KEY
+#### __SERVER_HOST__
+
+* **Name:** `SERVER_HOST`
+* **Secret:** The IP address or hostname of your deployment server.
+
+#### __SERVER_SSH_KEY__
 
 Create a dedicated SSH key pair for GitHub Actions to access your server.
 
@@ -202,7 +204,7 @@ Create a dedicated SSH key pair for GitHub Actions to access your server.
 
 `cat ~/.ssh/conduit_pipeline_key`
 
-5. Copy the **entire** contents of the private key, including the **-----BEGIN OPENSSH PRIVATE KEY-----** and **-----END OPENSSH PRIVATE KEY-----** lines.
+5. Copy the **entire** contents of the private key, including the *-----BEGIN OPENSSH PRIVATE KEY-----* and *-----END OPENSSH PRIVATE KEY-----* lines.
 
 6. In GitHub, create a new repository secret with:
 
@@ -214,7 +216,7 @@ Create a dedicated SSH key pair for GitHub Actions to access your server.
 > [!IMPORTANT]
 > Never share or commit your private SSH key. It should only be stored as a GitHub repository secret.
 
-#### DOT_ENV_FILE
+#### __DOT_ENV_FILE__
 
 Your `.env` file should contain all environment variables required by the application.
 
