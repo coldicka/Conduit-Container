@@ -1,0 +1,76 @@
+services:
+  # --- DATABASE ---
+  database:
+    container_name: conduit_container_database
+    image: postgres:16-alpine
+    restart: unless-stopped
+    command: ["postgres", "-c", "password_encryption=md5"]
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- FRONTEND ---
+  frontend:
+    container_name: conduit_container_frontend
+    restart: unless-stopped
+    image: ghcr.io/${GHCR_OWNER}/conduit-frontend:latest
+    ports:
+      - "8282:80"
+    volumes:
+      - django-static:/usr/share/nginx/html/static
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # --- BACKEND ---
+  backend:
+    container_name: conduit_container_backend
+    restart: unless-stopped
+    user: root
+    image: ghcr.io/${GHCR_OWNER}/conduit-backend:latest
+    volumes:
+      - backend-data:/app/db_data
+      - django-static:/app/staticfiles
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      CORS_ORIGIN_WHITELIST: ${CORS_ORIGIN_WHITELIST}
+    networks:
+      - app-network
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      database:
+        condition: service_healthy
+
+# --- NETWORK & VOLUMES ---
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
+  backend-data:
+  django-static:
